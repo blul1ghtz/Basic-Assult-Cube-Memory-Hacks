@@ -4,8 +4,10 @@
 #include <tlhelp32.h>
 #include <tchar.h>
 
+// GETS A MODULE NAMES BASE ADDRESS FROM A PROCESS ID
 DWORD GetModuleBaseAddress(TCHAR* ModuleName, DWORD PID)
 {
+    // MAKES SNAPSHOT OF ALL MODULES WITHIN A PROCESS TO FIND THE ONE SPECIFIED
     DWORD dwModuleBaseAddress = 0;
     HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, PID);
     MODULEENTRY32 ModuleEntry32 = { 0 };
@@ -13,6 +15,7 @@ DWORD GetModuleBaseAddress(TCHAR* ModuleName, DWORD PID)
     if (Module32First(hSnapshot, &ModuleEntry32))
     {
         do {
+            // IF FOUND MODULE WITH SPECIFIED NAME GET BASE ADDRESS
             if (_tcscmp(ModuleEntry32.szModule, ModuleName) == 0)
             {
                 dwModuleBaseAddress = (DWORD)ModuleEntry32.modBaseAddr;
@@ -24,6 +27,7 @@ DWORD GetModuleBaseAddress(TCHAR* ModuleName, DWORD PID)
     return dwModuleBaseAddress;
 }
 
+// DOES MATH WITH OFFSETS TO GET MEMORY POINTER TO WRITE DATA TO
 DWORD GetPointerAddress(HANDLE Handle, DWORD PID, DWORD GameBaseAddress, DWORD Address, std::vector<DWORD> Offsets)
 {
     DWORD PointerAddress = NULL;
